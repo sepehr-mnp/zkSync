@@ -1,0 +1,26 @@
+[
+  {
+    "address": "0x0000000000000000000000000000000000000000",
+    "decimals": 18,
+    "name": "Ether",
+    "symbol": "ETH"
+  },
+  {
+    "address": "0x7E2026D8f35872923F5459BbEDDB809F6aCEfEB3",
+    "decimals": 18,
+    "name": "Test Token (zkSync Sepolia)",
+    "symbol": "TEST"
+  },
+  {
+    "address": "0xe1405bA6D206e978f739E2D9702CC8a0C712755A",
+    "decimals": 6,
+    "name": "USD Coin (zkSync Sepolia)",
+    "symbol": "USDC"
+  },
+  {
+    "address": "0x6Ff473f001877D553833B6e312C89b3c8fACa7Ac",
+    "decimals": 18,
+    "name": "DAI (zkSync Sepolia)",
+    "symbol": "DAI"
+  }
+]
