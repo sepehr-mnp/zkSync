@@ -8,10 +8,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const DEPLOYER_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || "";
-
 export default async function (hre: HardhatRuntimeEnvironment) {
   // @ts-ignore target zkSyncTestnet in config file which can be testnet or local
-  console.log(DEPLOYER_PRIVATE_KEY);
   const provider = new Provider(hre.config.networks.zkSyncTestnet.url);
   const wallet = new Wallet(DEPLOYER_PRIVATE_KEY, provider);
   const deployer = new Deployer(hre, wallet);
@@ -27,24 +25,35 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   // });
   // await depositHandle.wait();
 
-  var factory = await deployer.deploy(factoryArtifact, [utils.hashBytecode(aaArtifact.bytecode)], undefined, [aaArtifact.bytecode]);
-  //console.log(utils.hashBytecode(aaArtifact.bytecode))
-  //const factory = await deployContract("AAFactory", [utils.hashBytecode(aaArtifact.bytecode)]);
-  var  address = await factory.getAddress();
-   console.log(address);
-  console.log(`AA factory address: ${address}`);
+  const factory = await deployer.deploy(
+    factoryArtifact,
+    [utils.hashBytecode(aaArtifact.bytecode)],
+    undefined,
+    [aaArtifact.bytecode],
+  );
 
-  const aaFactory = new ethers.Contract(address, factoryArtifact.abi, wallet);
+  console.log(`AA factory address: ${factory.address}`);
+
+  const aaFactory = new ethers.Contract(
+    factory.address,
+    factoryArtifact.abi,
+    wallet,
+  );
 
   const owner = Wallet.createRandom();
   console.log("SC Account owner pk: ", owner.privateKey);
 
-  const salt = "0x0000000000000000000000000000000000000000000000000000000000000000";
+  const salt = ethers.constants.HashZero;
   const tx = await aaFactory.deployAccount(salt, owner.address);
   await tx.wait();
 
   const abiCoder = new ethers.utils.AbiCoder();
-  const accountAddress = utils.create2Address(address, await aaFactory.aaBytecodeHash(), salt, abiCoder.encode(["address"], [owner.address]));
+  const accountAddress = utils.create2Address(
+    factory.address,
+    await aaFactory.aaBytecodeHash(),
+    salt,
+    abiCoder.encode(["address"], [owner.address]),
+  );
 
   console.log(`SC Account deployed on address ${accountAddress}`);
 
@@ -52,7 +61,7 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   await (
     await wallet.sendTransaction({
       to: accountAddress,
-      value: ethers.utils.parseEther("0.02"),
+      value: ethers.utils.parseEther("0.00005"),
     })
   ).wait();
   console.log(`Done!`);

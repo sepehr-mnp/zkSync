@@ -96,8 +96,8 @@ export const deployContract = async (contractArtifactName: string, constructorAr
   await verifyEnoughBalance(wallet, deploymentFee);
 
   // Deploy the contract to zkSync
-  var contract = await deployer.deploy(artifact, constructorArguments);
-   contract.address = await contract.getAddress();
+  const contract = await deployer.deploy(artifact, constructorArguments);
+  const address = await contract.getAddress();
   const constructorArgs = contract.interface.encodeDeploy(constructorArguments);
   const fullContractSource = `${artifact.sourceName}:${artifact.contractName}`;
 
